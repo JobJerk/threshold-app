@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { Platform } from 'react-native'
 import { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
+import * as Linking from 'expo-linking'
 
 interface AuthContextType {
   user: User | null
@@ -38,10 +40,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signInWithEmail = async (email: string) => {
+    // Use web URL for web, deep link for native
+    const redirectTo = Platform.OS === 'web'
+      ? window.location.origin
+      : Linking.createURL('/auth/callback')
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: 'threshold://auth/callback',
+        emailRedirectTo: redirectTo,
       },
     })
     return { error: error ? new Error(error.message) : null }
