@@ -18,7 +18,7 @@ export function useProfile() {
         .single()
 
       if (error) throw error
-      return data
+      return data as Profile | null
     },
     enabled: !!user?.id,
   })

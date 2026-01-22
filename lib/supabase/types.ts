@@ -17,6 +17,9 @@ export type Database = {
           energy: number
           last_energy_reset: string
           created_at: string
+          current_streak: number
+          longest_streak: number
+          last_activity_date: string | null
         }
         Insert: {
           id: string
@@ -25,6 +28,9 @@ export type Database = {
           energy?: number
           last_energy_reset?: string
           created_at?: string
+          current_streak?: number
+          longest_streak?: number
+          last_activity_date?: string | null
         }
         Update: {
           id?: string
@@ -33,6 +39,9 @@ export type Database = {
           energy?: number
           last_energy_reset?: string
           created_at?: string
+          current_streak?: number
+          longest_streak?: number
+          last_activity_date?: string | null
         }
         Relationships: []
       }
@@ -108,18 +117,118 @@ export type Database = {
           }
         ]
       }
+      badges: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          icon: string
+          requirement_type: string
+          requirement_value: number
+          points_reward: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          icon: string
+          requirement_type: string
+          requirement_value: number
+          points_reward?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          icon?: string
+          requirement_type?: string
+          requirement_value?: number
+          points_reward?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          id: string
+          user_id: string
+          badge_id: string
+          earned_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          badge_id: string
+          earned_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          badge_id?: string
+          earned_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'user_badges_badge_id_fkey'
+            columns: ['badge_id']
+            isOneToOne: false
+            referencedRelation: 'badges'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_badges_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          id: string
+          username: string | null
+          points: number
+          current_streak: number
+          longest_streak: number
+          total_commits: number
+          badge_count: number
+          rank: number
+        }
+      }
     }
     Functions: {
       increment_points: {
-        Args: { user_id: string; amount: number }
+        Args: {
+          user_id: string
+          amount: number
+        }
         Returns: undefined
       }
       increment_threshold_count: {
-        Args: { threshold_id: string }
+        Args: {
+          threshold_id: string
+        }
         Returns: undefined
+      }
+      update_user_streak: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      check_and_award_badges: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          badge_name: string
+          badge_icon: string
+        }[]
       }
     }
     Enums: {
@@ -159,3 +268,6 @@ export type Tables<
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Threshold = Database['public']['Tables']['thresholds']['Row']
 export type Commitment = Database['public']['Tables']['commitments']['Row']
+export type Badge = Database['public']['Tables']['badges']['Row']
+export type UserBadge = Database['public']['Tables']['user_badges']['Row']
+export type LeaderboardEntry = Database['public']['Views']['leaderboard']['Row']

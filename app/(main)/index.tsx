@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from 'react'
-import { View, Text, Dimensions, Alert } from 'react-native'
+import { View, Text, Dimensions, Alert, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Swiper from 'react-native-deck-swiper'
 import { Header } from '@/components/layout/Header'
@@ -23,8 +23,13 @@ export default function Home() {
       commit(
         { threshold },
         {
-          onSuccess: ({ points }) => {
-            Alert.alert('Committed!', `You earned ${points} points for supporting this cause.`)
+          onSuccess: ({ points, newBadges }) => {
+            let message = `You earned ${points} points for supporting this cause.`
+            if (newBadges && newBadges.length > 0) {
+              const badgeNames = newBadges.map((b) => `${b.badge_icon} ${b.badge_name}`).join('\n')
+              message += `\n\nNew badges earned:\n${badgeNames}`
+            }
+            Alert.alert('Committed!', message)
           },
           onError: (err) => {
             Alert.alert('Error', err.message)

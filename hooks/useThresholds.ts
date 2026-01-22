@@ -15,7 +15,8 @@ export function useThresholds() {
         .select('threshold_id')
         .eq('user_id', user?.id ?? '')
 
-      const committedIds = commitments?.map((c) => c.threshold_id) ?? []
+      const committedIds =
+        (commitments as { threshold_id: string }[] | null)?.map((c) => c.threshold_id) ?? []
 
       let query = supabase
         .from('thresholds')
@@ -30,7 +31,7 @@ export function useThresholds() {
       const { data, error } = await query
 
       if (error) throw error
-      return data ?? []
+      return (data as Threshold[] | null) ?? []
     },
     enabled: !!user?.id,
   })
