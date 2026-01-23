@@ -41,7 +41,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       {/* Toast container - fixed at top */}
       {toasts.length > 0 && (
-        <View className="absolute top-20 left-4 right-4 z-50">
+        <View
+          style={{
+            position: 'absolute',
+            top: 80,
+            left: 16,
+            right: 16,
+            zIndex: 9999,
+            elevation: 9999,
+          }}
+          pointerEvents="box-none"
+        >
           {toasts.map((toast) => (
             <Toast key={toast.id} toast={toast} onDismiss={dismissToast} />
           ))}
