@@ -1,58 +1,66 @@
 import { View, Text } from 'react-native'
+import { Heart, ShoppingBag, Leaf, Cpu, Briefcase } from 'lucide-react-native'
 import { Threshold } from '@/lib/supabase/types'
 
 interface ThresholdCardProps {
   threshold: Threshold
 }
 
-const categoryColors: Record<string, { bg: string; text: string }> = {
-  Healthcare: { bg: 'bg-red-100', text: 'text-red-700' },
-  'Consumer Rights': { bg: 'bg-blue-100', text: 'text-blue-700' },
-  Climate: { bg: 'bg-green-100', text: 'text-green-700' },
-  Technology: { bg: 'bg-purple-100', text: 'text-purple-700' },
-  Labor: { bg: 'bg-orange-100', text: 'text-orange-700' },
+const categoryConfig: Record<string, { color: string; icon: React.ComponentType<{ size: number; color: string }> }> = {
+  Healthcare: { color: '#ef4444', icon: Heart },
+  'Consumer Rights': { color: '#3b82f6', icon: ShoppingBag },
+  Climate: { color: '#22c55e', icon: Leaf },
+  Technology: { color: '#a855f7', icon: Cpu },
+  Labor: { color: '#f97316', icon: Briefcase },
 }
 
 export function ThresholdCard({ threshold }: ThresholdCardProps) {
   const progress = (threshold.current_count / threshold.target_count) * 100
-  const colors = categoryColors[threshold.category] || { bg: 'bg-gray-100', text: 'text-gray-700' }
+  const config = categoryConfig[threshold.category] || { color: '#666666', icon: Heart }
+  const IconComponent = config.icon
 
   return (
-    <View className="bg-white rounded-3xl p-6 shadow-lg mx-4 h-[420px]">
-      <View className={`self-start px-3 py-1 rounded-full ${colors.bg} mb-4`}>
-        <Text className={`text-sm font-medium ${colors.text}`}>{threshold.category}</Text>
+    <View className="bg-card rounded-3xl p-6 mx-4 h-[420px] border border-border-default">
+      <View
+        className="self-start px-3 py-1.5 rounded-full flex-row items-center mb-4"
+        style={{ backgroundColor: `${config.color}20` }}
+      >
+        <IconComponent size={14} color={config.color} />
+        <Text className="text-sm font-medium ml-1.5" style={{ color: config.color }}>
+          {threshold.category}
+        </Text>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-3">{threshold.title}</Text>
+      <Text className="text-2xl font-bold text-text-primary mb-3">{threshold.title}</Text>
 
-      <Text className="text-gray-600 text-base leading-6 mb-6">{threshold.description}</Text>
+      <Text className="text-text-secondary text-base leading-6 mb-6">{threshold.description}</Text>
 
       <View className="flex-1" />
 
       <View>
         <View className="flex-row justify-between mb-2">
-          <Text className="text-gray-500 text-sm">Progress</Text>
-          <Text className="text-gray-900 font-semibold">
+          <Text className="text-text-tertiary text-sm">Progress</Text>
+          <Text className="text-text-primary font-semibold">
             {threshold.current_count.toLocaleString()} / {threshold.target_count.toLocaleString()}
           </Text>
         </View>
-        <View className="h-3 bg-gray-200 rounded-full overflow-hidden">
+        <View className="h-3 bg-bg-tertiary rounded-full overflow-hidden">
           <View
-            className="h-full bg-indigo-600 rounded-full"
+            className="h-full bg-accent rounded-full"
             style={{ width: `${Math.min(progress, 100)}%` }}
           />
         </View>
-        <Text className="text-center text-gray-500 text-sm mt-2">
+        <Text className="text-center text-text-tertiary text-sm mt-2">
           {progress.toFixed(1)}% to threshold
         </Text>
       </View>
 
       <View className="flex-row justify-center mt-6 gap-8">
         <View className="items-center">
-          <Text className="text-gray-400 text-xl">{'<'} Pass</Text>
+          <Text className="text-text-tertiary text-xl">{'<'} Pass</Text>
         </View>
         <View className="items-center">
-          <Text className="text-indigo-600 text-xl font-semibold">Commit {'>'}</Text>
+          <Text className="text-accent text-xl font-semibold">Commit {'>'}</Text>
         </View>
       </View>
     </View>

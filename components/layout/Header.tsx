@@ -1,22 +1,23 @@
 import { View, Text, Pressable } from 'react-native'
+import { User, Zap } from 'lucide-react-native'
 import { useProfile } from '@/hooks/useProfile'
-import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'expo-router'
 
 export function Header() {
   const { data: profile } = useProfile()
-  const { signOut } = useAuth()
+  const router = useRouter()
 
   return (
-    <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
-      <Text className="text-xl font-bold text-gray-900">Threshold</Text>
+    <View className="flex-row items-center justify-between px-4 py-3 bg-bg-primary border-b border-border-default">
+      <Text className="text-xl font-bold text-text-primary">Threshold</Text>
       <View className="flex-row items-center gap-4">
-        <View className="bg-indigo-100 px-3 py-1 rounded-full flex-row items-center">
-          <Text className="text-indigo-600 font-semibold">{profile?.points ?? 0}</Text>
-          <Text className="text-indigo-600 ml-1">pts</Text>
+        <View className="bg-accent-muted px-3 py-1.5 rounded-full flex-row items-center">
+          <Zap size={14} color="#f59e0b" fill="#f59e0b" />
+          <Text className="text-accent font-semibold ml-1">{profile?.points ?? 0}</Text>
         </View>
-        <Pressable onPress={signOut}>
-          <View className="w-8 h-8 bg-gray-200 rounded-full items-center justify-center">
-            <Text className="text-gray-600 text-sm">👤</Text>
+        <Pressable onPress={() => router.push('/(main)/profile')}>
+          <View className="w-8 h-8 bg-bg-tertiary rounded-full items-center justify-center">
+            <User size={16} color="#a3a3a3" />
           </View>
         </Pressable>
       </View>

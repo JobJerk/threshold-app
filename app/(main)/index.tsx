@@ -1,7 +1,8 @@
 import { useRef, useState, useCallback } from 'react'
-import { View, Text, Dimensions, Alert, Platform } from 'react-native'
+import { View, Text, Dimensions, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Swiper from 'react-native-deck-swiper'
+import { PartyPopper } from 'lucide-react-native'
 import { Header } from '@/components/layout/Header'
 import { ThresholdCard } from '@/components/threshold/ThresholdCard'
 import { useThresholds } from '@/hooks/useThresholds'
@@ -26,8 +27,8 @@ export default function Home() {
           onSuccess: ({ points, newBadges }) => {
             let message = `You earned ${points} points for supporting this cause.`
             if (newBadges && newBadges.length > 0) {
-              const badgeNames = newBadges.map((b) => `${b.badge_icon} ${b.badge_name}`).join('\n')
-              message += `\n\nNew badges earned:\n${badgeNames}`
+              const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
+              message += `\n\nNew badges earned: ${badgeNames}`
             }
             Alert.alert('Committed!', message)
           },
@@ -50,10 +51,10 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
+      <SafeAreaView className="flex-1 bg-background">
         <Header />
         <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-500">Loading thresholds...</Text>
+          <Text className="text-text-secondary">Loading thresholds...</Text>
         </View>
       </SafeAreaView>
     )
@@ -61,10 +62,10 @@ export default function Home() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
+      <SafeAreaView className="flex-1 bg-background">
         <Header />
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-red-500 text-center">Error loading thresholds. Please try again.</Text>
+          <Text className="text-error text-center">Error loading thresholds. Please try again.</Text>
         </View>
       </SafeAreaView>
     )
@@ -72,15 +73,15 @@ export default function Home() {
 
   if (!thresholds || thresholds.length === 0 || cardIndex >= thresholds.length) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
+      <SafeAreaView className="flex-1 bg-background">
         <Header />
         <View className="flex-1 items-center justify-center px-8">
           <View className="items-center">
-            <Text className="text-6xl mb-4">🎉</Text>
-            <Text className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            <PartyPopper size={64} color="#f59e0b" />
+            <Text className="text-2xl font-bold text-text-primary mb-2 text-center mt-4">
               You're all caught up!
             </Text>
-            <Text className="text-gray-600 text-center">
+            <Text className="text-text-secondary text-center">
               No more thresholds for now.{'\n'}Check back tomorrow for new causes.
             </Text>
           </View>
@@ -90,7 +91,7 @@ export default function Home() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
       <Header />
       <View className="flex-1 pt-4">
         <Swiper
@@ -115,9 +116,9 @@ export default function Home() {
               title: 'PASS',
               style: {
                 label: {
-                  backgroundColor: '#e5e7eb',
-                  borderColor: '#9ca3af',
-                  color: '#6b7280',
+                  backgroundColor: '#1a1a1a',
+                  borderColor: '#666666',
+                  color: '#666666',
                   borderWidth: 2,
                   fontSize: 24,
                   fontWeight: 'bold',
@@ -136,9 +137,9 @@ export default function Home() {
               title: 'COMMIT',
               style: {
                 label: {
-                  backgroundColor: '#e0e7ff',
-                  borderColor: '#6366f1',
-                  color: '#6366f1',
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                  borderColor: '#f59e0b',
+                  color: '#f59e0b',
                   borderWidth: 2,
                   fontSize: 24,
                   fontWeight: 'bold',
