@@ -2,6 +2,7 @@ import { View, Text, Pressable } from 'react-native'
 import { User, Zap } from 'lucide-react-native'
 import { useProfile } from '@/hooks/useProfile'
 import { useRouter } from 'expo-router'
+import { EnergyDisplay } from './EnergyDisplay'
 
 export function Header() {
   const { data: profile } = useProfile()
@@ -10,7 +11,8 @@ export function Header() {
   return (
     <View className="flex-row items-center justify-between px-4 py-3 bg-bg-primary border-b border-border-default">
       <Text className="text-xl font-bold text-text-primary">Threshold</Text>
-      <View className="flex-row items-center gap-4">
+      <View className="flex-row items-center gap-3">
+        <EnergyDisplay />
         <View className="bg-accent-muted px-3 py-1.5 rounded-full flex-row items-center">
           <Zap size={14} color="#f59e0b" fill="#f59e0b" />
           <Text className="text-accent font-semibold ml-1">{profile?.points ?? 0}</Text>

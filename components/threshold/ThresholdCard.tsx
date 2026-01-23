@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { Heart, ShoppingBag, Leaf, Cpu, Briefcase } from 'lucide-react-native'
+import { Heart, ShoppingBag, Leaf, Cpu, Briefcase, GraduationCap, Home } from 'lucide-react-native'
 import { Threshold } from '@/lib/supabase/types'
 
 interface ThresholdCardProps {
@@ -12,6 +12,8 @@ const categoryConfig: Record<string, { color: string; icon: React.ComponentType<
   Climate: { color: '#22c55e', icon: Leaf },
   Technology: { color: '#a855f7', icon: Cpu },
   Labor: { color: '#f97316', icon: Briefcase },
+  Education: { color: '#06b6d4', icon: GraduationCap },
+  Housing: { color: '#ec4899', icon: Home },
 }
 
 export function ThresholdCard({ threshold }: ThresholdCardProps) {
