@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/Header'
 import { ThresholdCard } from '@/components/threshold/ThresholdCard'
 import { useThresholds } from '@/hooks/useThresholds'
 import { useCommitment } from '@/hooks/useCommitment'
+import { useEnergy } from '@/hooks/useEnergy'
 import { Threshold } from '@/lib/supabase/types'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
@@ -14,12 +15,29 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 export default function Home() {
   const { data: thresholds, isLoading, error } = useThresholds()
   const { mutate: commit, isPending: isCommitting } = useCommitment()
+  const { energy, canCommit, timeUntilNext } = useEnergy()
   const swiperRef = useRef<Swiper<Threshold>>(null)
   const [cardIndex, setCardIndex] = useState(0)
 
   const onSwipedRight = useCallback(
     (index: number) => {
       if (!thresholds) return
+
+      // Check if user has enough energy
+      if (!canCommit) {
+        const timeMsg = timeUntilNext
+          ? `\n\nEnergy refills in ${timeUntilNext.minutes}m ${timeUntilNext.seconds}s, or fully resets at midnight.`
+          : ''
+        Alert.alert(
+          'Out of Energy',
+          `You need energy to commit to causes. Pass on this one for now, or wait for your energy to refill.${timeMsg}`,
+          [{ text: 'OK' }]
+        )
+        // Swipe the card back (undo the swipe)
+        swiperRef.current?.swipeBack()
+        return
+      }
+
       const threshold = thresholds[index]
       commit(
         { threshold },
@@ -38,7 +56,7 @@ export default function Home() {
         }
       )
     },
-    [thresholds, commit]
+    [thresholds, commit, canCommit, timeUntilNext]
   )
 
   const onSwipedLeft = useCallback(() => {

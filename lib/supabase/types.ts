@@ -186,6 +186,38 @@ export type Database = {
           }
         ]
       }
+      push_tokens: {
+        Row: {
+          id: string
+          user_id: string
+          token: string
+          platform: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          token: string
+          platform: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          token?: string
+          platform?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'push_tokens_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       leaderboard: {
@@ -230,6 +262,25 @@ export type Database = {
           badge_icon: string
         }[]
       }
+      consume_energy: {
+        Args: {
+          p_user_id: string
+          amount: number
+        }
+        Returns: undefined
+      }
+      refill_energy: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: number
+      }
+      get_energy_with_refill: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
@@ -270,4 +321,5 @@ export type Threshold = Database['public']['Tables']['thresholds']['Row']
 export type Commitment = Database['public']['Tables']['commitments']['Row']
 export type Badge = Database['public']['Tables']['badges']['Row']
 export type UserBadge = Database['public']['Tables']['user_badges']['Row']
+export type PushToken = Database['public']['Tables']['push_tokens']['Row']
 export type LeaderboardEntry = Database['public']['Views']['leaderboard']['Row']

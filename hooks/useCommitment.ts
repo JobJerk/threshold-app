@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { calculateCommitmentPoints, isEarlyCommit } from '@/lib/points/calculator'
+import { consumeEnergy, ENERGY_PER_COMMIT } from '@/lib/energy/manager'
 import { Threshold } from '@/lib/supabase/types'
 
 interface CommitParams {
@@ -20,6 +21,9 @@ export function useCommitment() {
   return useMutation<CommitResult, Error, CommitParams>({
     mutationFn: async ({ threshold }) => {
       if (!user?.id) throw new Error('User not authenticated')
+
+      // Consume energy first (atomic operation, will throw if insufficient)
+      await consumeEnergy(user.id, ENERGY_PER_COMMIT)
 
       const earlyCommit = isEarlyCommit(threshold.current_count, threshold.target_count)
       const points = calculateCommitmentPoints({ isEarlyCommit: earlyCommit })
