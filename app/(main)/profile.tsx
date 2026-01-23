@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { User, Zap, Award, Lock, LogOut, ChevronDown, ChevronUp } from 'lucide-react-native'
+import { User, Zap, Award, Lock, LogOut, ChevronDown, ChevronUp, FileText, Check, Clock } from 'lucide-react-native'
 import { useProfile } from '@/hooks/useProfile'
 import { useBadges, BadgeWithStatus } from '@/hooks/useBadges'
+import { useCommitments, Commitment } from '@/hooks/useCommitments'
 import { useAuth } from '@/contexts/AuthContext'
 
 function StatCard({
@@ -39,6 +40,63 @@ function RankItem({ badge }: { badge: BadgeWithStatus }) {
       <Text className="text-xs text-center text-text-secondary font-medium mt-1" numberOfLines={2}>
         {badge.name}
       </Text>
+    </View>
+  )
+}
+
+function CommitmentItem({ commitment }: { commitment: Commitment }) {
+  const threshold = commitment.threshold
+  const isAchieved = threshold && threshold.current_count >= threshold.target_count
+  const progress = threshold ? Math.min((threshold.current_count / threshold.target_count) * 100, 100) : 0
+
+  const committedDate = new Date(commitment.committed_at)
+  const dateStr = committedDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric'
+  })
+
+  return (
+    <View className="bg-card rounded-xl p-4 mb-3 border border-border-default mx-4">
+      <View className="flex-row items-start justify-between mb-2">
+        <View className="flex-1 mr-3">
+          <Text className="text-text-primary font-semibold" numberOfLines={2}>
+            {threshold?.title || 'Unknown Threshold'}
+          </Text>
+          <Text className="text-text-secondary text-xs mt-1">
+            {threshold?.category || 'Unknown'}
+          </Text>
+        </View>
+        <View className="items-end">
+          <View className="flex-row items-center">
+            {isAchieved ? (
+              <Check size={14} color="#22c55e" />
+            ) : (
+              <Clock size={14} color="#f59e0b" />
+            )}
+            <Text className={`text-xs ml-1 ${isAchieved ? 'text-success' : 'text-accent'}`}>
+              {isAchieved ? 'Achieved' : 'Pending'}
+            </Text>
+          </View>
+          <Text className="text-text-secondary text-xs mt-1">{dateStr}</Text>
+        </View>
+      </View>
+
+      {/* Progress bar */}
+      <View className="h-1.5 bg-bg-tertiary rounded-full overflow-hidden mb-2">
+        <View
+          className={`h-full rounded-full ${isAchieved ? 'bg-success' : 'bg-accent'}`}
+          style={{ width: `${progress}%` }}
+        />
+      </View>
+
+      <View className="flex-row items-center justify-between">
+        <Text className="text-text-secondary text-xs">
+          {threshold?.current_count?.toLocaleString() || 0} / {threshold?.target_count?.toLocaleString() || 0}
+        </Text>
+        <Text className="text-accent text-xs font-semibold">
+          +{commitment.points_earned} force
+        </Text>
+      </View>
     </View>
   )
 }
@@ -138,6 +196,7 @@ function WhyWeAreHere() {
 export default function Profile() {
   const { data: profile, isLoading: profileLoading } = useProfile()
   const { data: badges, isLoading: badgesLoading } = useBadges()
+  const { data: commitments, isLoading: commitmentsLoading } = useCommitments()
   const { signOut, user } = useAuth()
 
   const isLoading = profileLoading || badgesLoading
@@ -178,6 +237,38 @@ export default function Profile() {
         <View className="flex-row gap-3 px-4 py-4">
           <StatCard label="Force" value={profile?.points ?? 0} icon={Zap} />
           <StatCard label="Ranks" value={earnedRanks.length} icon={Award} />
+        </View>
+
+        {/* My Commitments */}
+        <View className="mb-4">
+          <View className="flex-row items-center px-4 mb-3">
+            <FileText size={20} color="#f59e0b" />
+            <Text className="text-lg font-bold text-text-primary ml-2">
+              My Commitments
+            </Text>
+            {commitments && commitments.length > 0 && (
+              <Text className="text-text-secondary ml-2">({commitments.length})</Text>
+            )}
+          </View>
+
+          {commitmentsLoading ? (
+            <View className="items-center py-8">
+              <ActivityIndicator size="small" color="#f59e0b" />
+            </View>
+          ) : commitments && commitments.length > 0 ? (
+            commitments.map((commitment) => (
+              <CommitmentItem key={commitment.id} commitment={commitment} />
+            ))
+          ) : (
+            <View className="mx-4 bg-card rounded-xl p-6 border border-border-default items-center">
+              <Text className="text-text-secondary text-center">
+                No commitments yet.
+              </Text>
+              <Text className="text-text-secondary text-center text-sm mt-1">
+                Swipe right on thresholds to commit.
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Why We're Here */}

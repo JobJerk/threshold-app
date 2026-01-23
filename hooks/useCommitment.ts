@@ -76,6 +76,7 @@ export function useCommitment() {
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       queryClient.invalidateQueries({ queryKey: ['badges'] })
       queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
+      queryClient.invalidateQueries({ queryKey: ['commitments'] })
     },
   })
 }
