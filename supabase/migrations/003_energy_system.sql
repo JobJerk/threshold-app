@@ -2,12 +2,16 @@
 
 -- Atomic energy consumption function
 -- Uses row-level locking to prevent race conditions
+-- First applies any pending refills (midnight/hourly), then consumes
 create or replace function consume_energy(p_user_id uuid, amount integer)
 returns void as $$
 declare
   v_current_energy integer;
 begin
-  -- Lock the row and get current energy
+  -- First apply any pending refills (midnight reset or hourly)
+  perform refill_energy(p_user_id);
+
+  -- Now lock the row and get current energy
   select energy into v_current_energy
   from profiles
   where id = p_user_id
@@ -17,8 +21,10 @@ begin
     raise exception 'Insufficient energy';
   end if;
 
+  -- Decrement energy and update last_energy_reset
   update profiles
-  set energy = energy - amount
+  set energy = energy - amount,
+      last_energy_reset = now()
   where id = p_user_id;
 end;
 $$ language plpgsql security definer;
