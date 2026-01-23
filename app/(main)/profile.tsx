@@ -52,50 +52,52 @@ function WhyWeAreHere() {
         onPress={() => setExpanded(!expanded)}
         className="bg-card rounded-xl p-4 border border-border-default"
       >
-        <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center justify-center">
           <Text className="font-bold text-text-primary">Why We're Here</Text>
-          {expanded ? (
-            <ChevronUp size={20} color="#a3a3a3" />
-          ) : (
-            <ChevronDown size={20} color="#a3a3a3" />
-          )}
+          <View className="absolute right-0">
+            {expanded ? (
+              <ChevronUp size={20} color="#a3a3a3" />
+            ) : (
+              <ChevronDown size={20} color="#a3a3a3" />
+            )}
+          </View>
         </View>
 
         {expanded && (
-          <View className="mt-4">
-            <Text className="text-text-secondary leading-6 mb-4">
+          <View className="mt-6 px-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               There's a weight most of us carry — that the big problems aren't ours to solve.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               We're tired. Worn out. Misdirected by so many problems we don't know where to begin.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               We feel like we can't take on large entities because they have so much money. We can't change the government. We can't solve certain technical problems because there's too much constraint around them.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               These were the same feelings before we went to the moon.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               But by combining many patterns and many skills across many industries — by focusing — we did what seemed impossible.
             </Text>
 
-            <Text className="text-text-primary leading-6 mb-4 font-medium">
+            <Text className="text-text-primary leading-8 mb-8 text-center text-lg font-medium">
               This app is about focusing.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               It's about finding the problems that are worth solving, coordinating, agreeing, actually grabbing a metric around when they'll be feasible — and coordinating that with those who could compete to solve them.
             </Text>
 
-            <Text className="text-text-secondary leading-6 mb-4">
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
               What you're doing here is not just fun. It's not just interesting. These are not just cards — they are ideas created by experts and groups of people across industries, ideas that are executable, purposely crafted to get you out of the box.
             </Text>
 
-            <Text className="text-accent leading-6 font-semibold">
+            <Text className="text-accent leading-8 text-center text-lg font-semibold">
               Every time you swipe, every time you make a commitment — you are crafting the future.
             </Text>
           </View>
