@@ -1,7 +1,24 @@
-import { Tabs } from 'expo-router'
+import { useEffect } from 'react'
+import { Tabs, useRouter } from 'expo-router'
 import { Home, Trophy, User } from 'lucide-react-native'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function MainLayout() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  // Redirect to welcome if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/(auth)/welcome')
+    }
+  }, [user, loading])
+
+  // Don't render tabs until we confirm user is authenticated
+  if (loading || !user) {
+    return null
+  }
+
   return (
     <Tabs
       screenOptions={{
