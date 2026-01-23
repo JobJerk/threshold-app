@@ -85,20 +85,48 @@ function WhyWeAreHere() {
               But by combining many patterns and many skills across many industries — by focusing — we did what seemed impossible.
             </Text>
 
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
+              Today, the technological evolutions in our hands, especially in information technology, in AI, in our ability to coordinate — these have yet to yield the magnitude of impact that could possibly come out of them. Part of this is because of greed. Part of this is because of direction. Part of this is because there are so many problems we don't even know where to begin.
+            </Text>
+
             <Text className="text-text-primary leading-8 mb-8 text-center text-lg font-medium">
               This app is about focusing.
             </Text>
 
             <Text className="text-text-secondary leading-7 mb-6 text-center">
-              It's about finding the problems that are worth solving, coordinating, agreeing, actually grabbing a metric around when they'll be feasible — and coordinating that with those who could compete to solve them.
+              It's about finding the problems that are worth solving, coordinating, agreeing, actually grabbing a metric around when they'll be feasible — and coordinating that with those who could build. Those who can compete to build.
             </Text>
 
             <Text className="text-text-secondary leading-7 mb-6 text-center">
-              What you're doing here is not just fun. It's not just interesting. These are not just cards — they are ideas created by experts and groups of people across industries, ideas that are executable, purposely crafted to get you out of the box.
+              This app is a vision. It's a test.
             </Text>
 
-            <Text className="text-accent leading-8 text-center text-lg font-semibold">
-              Every time you swipe, every time you make a commitment — you are crafting the future.
+            <Text className="text-accent leading-8 mb-8 text-center text-lg font-semibold">
+              Is now the time? Is this worth it?
+            </Text>
+
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
+              What you're doing here is not just fun. It's not just interesting. It doesn't just get your mind thinking and breaking down constraints. These are not just cards — they are ideas created by experts and groups of people across industries, ideas that are executable, purposely crafted to get you out of the box.
+            </Text>
+
+            <Text className="text-text-primary leading-8 mb-8 text-center text-lg font-medium">
+              Every time you swipe, every time you make a commitment, every time you give an insight or add something — you are crafting the future.
+            </Text>
+
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
+              You don't need the majority to capture and change the direction of an entire community.
+            </Text>
+
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
+              Our goal is to change the direction of the entire globe. Our goal is to change the direction of every industry. Our goal is to change how we approach responding to problems, because the current ways don't work.
+            </Text>
+
+            <Text className="text-text-secondary leading-7 mb-6 text-center">
+              This is not for those waiting for someone else, telling us it will correct itself.
+            </Text>
+
+            <Text className="text-text-secondary leading-7 text-center">
+              This process, this community, this venture, this vision — it is for those who are seeking what is next. Not those seeking something slightly better. Something entirely new. Something so much better, so far beyond where we're at today, that nothing else will do.
             </Text>
           </View>
         )}
