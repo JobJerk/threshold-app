@@ -127,8 +127,8 @@ export async function scheduleEnergyRefillNotification(): Promise<void> {
   await Notifications.scheduleNotificationAsync({
     identifier: 'energy-refill',
     content: {
-      title: 'Energy Recharged!',
-      body: 'Your energy is full. Ready to support more causes?',
+      title: 'New futures ready.',
+      body: 'The direction keeps changing.',
       data: { type: 'energy-refill' },
     },
     trigger: {
@@ -139,13 +139,13 @@ export async function scheduleEnergyRefillNotification(): Promise<void> {
 }
 
 /**
- * Schedule a streak reminder notification
+ * Schedule a daily reminder notification
  */
-export async function scheduleStreakReminderNotification(): Promise<void> {
+export async function scheduleDailyReminderNotification(): Promise<void> {
   if (Platform.OS === 'web') return
 
-  // Cancel any existing streak reminders
-  await Notifications.cancelScheduledNotificationAsync('streak-reminder')
+  // Cancel any existing reminders
+  await Notifications.cancelScheduledNotificationAsync('daily-reminder')
 
   // Schedule for 6pm today or tomorrow
   const reminderTime = new Date()
@@ -157,11 +157,11 @@ export async function scheduleStreakReminderNotification(): Promise<void> {
   }
 
   await Notifications.scheduleNotificationAsync({
-    identifier: 'streak-reminder',
+    identifier: 'daily-reminder',
     content: {
-      title: "Don't break your streak!",
-      body: 'Make a commitment today to keep your streak alive.',
-      data: { type: 'streak-reminder' },
+      title: 'The future keeps shifting.',
+      body: 'New thresholds. New decisions.',
+      data: { type: 'daily-reminder' },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,

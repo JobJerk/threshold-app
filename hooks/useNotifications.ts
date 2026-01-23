@@ -5,7 +5,7 @@ import {
   getPushToken,
   registerPushToken,
   initializeNotificationListeners,
-  scheduleStreakReminderNotification,
+  scheduleDailyReminderNotification,
   NotificationPermissionStatus,
 } from '@/lib/notifications/service'
 
@@ -41,8 +41,8 @@ export function useNotifications() {
       // Register token with backend
       await registerPushToken(user.id, token)
 
-      // Schedule streak reminder
-      await scheduleStreakReminderNotification()
+      // Schedule daily reminder
+      await scheduleDailyReminderNotification()
     } catch (error) {
       console.error('Failed to register for notifications:', error)
     } finally {
@@ -60,7 +60,7 @@ export function useNotifications() {
         console.log('Notification response:', response)
         // Handle notification tap - could navigate to specific screen
         const data = response.notification.request.content.data
-        if (data?.type === 'streak-reminder') {
+        if (data?.type === 'daily-reminder' || data?.type === 'energy-refill') {
           // Could navigate to home screen
         }
       }
