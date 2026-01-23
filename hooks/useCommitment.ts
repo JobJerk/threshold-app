@@ -74,6 +74,7 @@ export function useCommitment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['thresholds'] })
       queryClient.invalidateQueries({ queryKey: ['profile'] })
+      queryClient.invalidateQueries({ queryKey: ['energy'] })
       queryClient.invalidateQueries({ queryKey: ['badges'] })
       queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
       queryClient.invalidateQueries({ queryKey: ['commitments'] })
