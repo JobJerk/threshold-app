@@ -58,7 +58,7 @@ export default function Login() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="px-4 py-2">
-        <Pressable onPress={() => router.replace('/(auth)/welcome')} className="flex-row items-center">
+        <Pressable onPress={() => router.replace('/welcome')} className="flex-row items-center">
           <ArrowLeft size={20} color="#a3a3a3" />
           <Text className="text-text-secondary ml-2">Back</Text>
         </Pressable>
