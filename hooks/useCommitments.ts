@@ -45,8 +45,12 @@ export function useCommitments() {
       if (error) throw error
 
       // Transform the data to flatten the threshold object
-      return (data || []).map((item) => ({
-        ...item,
+      // Supabase returns relations as arrays, so we need to extract the first item
+      return (data || []).map((item: Record<string, unknown>) => ({
+        id: item.id as string,
+        threshold_id: item.threshold_id as string,
+        points_earned: item.points_earned as number,
+        committed_at: item.committed_at as string,
         threshold: Array.isArray(item.threshold) ? item.threshold[0] : item.threshold,
       })) as Commitment[]
     },
