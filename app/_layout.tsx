@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ToastProvider } from '@/contexts/ToastContext'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { StatusBar } from 'expo-status-bar'
 import { useNotifications } from '@/hooks/useNotifications'
@@ -21,10 +22,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <NotificationInitializer>
-            <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false }} />
-          </NotificationInitializer>
+          <ToastProvider>
+            <NotificationInitializer>
+              <StatusBar style="dark" />
+              <Stack screenOptions={{ headerShown: false }} />
+            </NotificationInitializer>
+          </ToastProvider>
         </AuthProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>

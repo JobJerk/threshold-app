@@ -9,7 +9,7 @@ import { useThresholds } from '@/hooks/useThresholds'
 import { useCommitment } from '@/hooks/useCommitment'
 import { useEnergy } from '@/hooks/useEnergy'
 import { Threshold } from '@/lib/supabase/types'
-import { showAlert } from '@/utils/alert'
+import { useToast } from '@/contexts/ToastContext'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -57,6 +57,7 @@ export default function Home() {
   const { data: thresholds, isLoading, error } = useThresholds()
   const { mutateAsync: commitAsync, isPending: isCommitting } = useCommitment()
   const { energy, canCommit, timeUntilNext } = useEnergy()
+  const { showSuccess, showError, showToast } = useToast()
   const swiperRef = useRef<Swiper<Threshold>>(null)
   const [cardIndex, setCardIndex] = useState(0)
 
@@ -70,11 +71,13 @@ export default function Home() {
       if (!canCommit) {
         const depletedMessage = getRandomMessage(ENERGY_DEPLETED_MESSAGES)
         const timeMsg = timeUntilNext
-          ? `\n\nEnergy refills in ${timeUntilNext.minutes}m ${timeUntilNext.seconds}s, or fully resets at midnight.`
+          ? `Energy refills in ${timeUntilNext.minutes}m ${timeUntilNext.seconds}s, or fully resets at midnight.`
           : ''
-        showAlert(depletedMessage, `Pass for now, or wait for energy to refill.${timeMsg}`, [
-          { text: 'OK' },
-        ])
+        showToast({
+          type: 'info',
+          title: depletedMessage,
+          message: `Pass for now, or wait for energy to refill. ${timeMsg}`,
+        })
         // Swipe the card back (undo the swipe)
         swiperRef.current?.swipeBack()
         return
@@ -87,15 +90,15 @@ export default function Home() {
           let message = `+${points} force`
           if (newBadges && newBadges.length > 0) {
             const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
-            message += `\n\nNew rank: ${badgeNames}`
+            message += ` | New rank: ${badgeNames}`
           }
-          showAlert(commitMessage, message)
+          showSuccess(commitMessage, message)
         })
         .catch((err: Error) => {
-          showAlert('Error', err.message)
+          showError('Error', err.message)
         })
     },
-    [thresholds, commitAsync, canCommit, timeUntilNext]
+    [thresholds, commitAsync, canCommit, timeUntilNext, showSuccess, showError, showToast]
   )
 
   const onSwipedLeft = useCallback(() => {
