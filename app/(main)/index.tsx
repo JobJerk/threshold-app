@@ -1,8 +1,8 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import { View, Text, Dimensions, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Swiper from 'react-native-deck-swiper'
-import { PartyPopper } from 'lucide-react-native'
+import { Sparkles } from 'lucide-react-native'
 import { Header } from '@/components/layout/Header'
 import { ThresholdCard } from '@/components/threshold/ThresholdCard'
 import { useThresholds } from '@/hooks/useThresholds'
@@ -12,6 +12,46 @@ import { Threshold } from '@/lib/supabase/types'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
+const COMMITMENT_MESSAGES = [
+  'Toward the impossible.',
+  'The future shifts.',
+  'The direction changes.',
+  'Crafting the future.',
+  'Shaping what comes next.',
+  'Beyond where we are.',
+  'Something new begins.',
+  'Changing everything.',
+  'What comes next.',
+]
+
+const EMPTY_STATE_MESSAGES = [
+  'Decisions made.',
+  'Everything given.',
+  'The future holds.',
+  'Nothing held back.',
+  'Fully committed.',
+  'Complete.',
+  'Given completely.',
+  'Committed.',
+]
+
+const ENERGY_DEPLETED_MESSAGES = [
+  'Full commitment.',
+  'Everything given.',
+  'Nothing held back.',
+  'Gave completely.',
+  'Complete for today.',
+  'Given fully.',
+  'Committed completely.',
+  'Your energy went to the future.',
+  'Shaped today.',
+  'Full participation.',
+]
+
+function getRandomMessage(messages: string[]): string {
+  return messages[Math.floor(Math.random() * messages.length)]
+}
+
 export default function Home() {
   const { data: thresholds, isLoading, error } = useThresholds()
   const { mutate: commit, isPending: isCommitting } = useCommitment()
@@ -19,20 +59,21 @@ export default function Home() {
   const swiperRef = useRef<Swiper<Threshold>>(null)
   const [cardIndex, setCardIndex] = useState(0)
 
+  const emptyStateMessage = useMemo(() => getRandomMessage(EMPTY_STATE_MESSAGES), [])
+
   const onSwipedRight = useCallback(
     (index: number) => {
       if (!thresholds) return
 
       // Check if user has enough energy
       if (!canCommit) {
+        const depletedMessage = getRandomMessage(ENERGY_DEPLETED_MESSAGES)
         const timeMsg = timeUntilNext
           ? `\n\nEnergy refills in ${timeUntilNext.minutes}m ${timeUntilNext.seconds}s, or fully resets at midnight.`
           : ''
-        Alert.alert(
-          'Out of Energy',
-          `You need energy to commit to causes. Pass on this one for now, or wait for your energy to refill.${timeMsg}`,
-          [{ text: 'OK' }]
-        )
+        Alert.alert(depletedMessage, `Pass for now, or wait for energy to refill.${timeMsg}`, [
+          { text: 'OK' },
+        ])
         // Swipe the card back (undo the swipe)
         swiperRef.current?.swipeBack()
         return
@@ -43,12 +84,13 @@ export default function Home() {
         { threshold },
         {
           onSuccess: ({ points, newBadges }) => {
-            let message = `You earned ${points} points for supporting this cause.`
+            const commitMessage = getRandomMessage(COMMITMENT_MESSAGES)
+            let message = `+${points} force`
             if (newBadges && newBadges.length > 0) {
               const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
-              message += `\n\nNew badges earned: ${badgeNames}`
+              message += `\n\nNew rank: ${badgeNames}`
             }
-            Alert.alert('Committed!', message)
+            Alert.alert(commitMessage, message)
           },
           onError: (err) => {
             Alert.alert('Error', err.message)
@@ -95,12 +137,12 @@ export default function Home() {
         <Header />
         <View className="flex-1 items-center justify-center px-8">
           <View className="items-center">
-            <PartyPopper size={64} color="#f59e0b" />
+            <Sparkles size={64} color="#f59e0b" />
             <Text className="text-2xl font-bold text-text-primary mb-2 text-center mt-4">
-              You're all caught up!
+              {emptyStateMessage}
             </Text>
             <Text className="text-text-secondary text-center">
-              No more thresholds for now.{'\n'}Check back tomorrow for new causes.
+              New thresholds tomorrow.
             </Text>
           </View>
         </View>

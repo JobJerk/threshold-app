@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { User, Zap, Flame, Award, Lock, LogOut } from 'lucide-react-native'
+import { User, Zap, Award, Lock, LogOut, ChevronDown, ChevronUp } from 'lucide-react-native'
 import { useProfile } from '@/hooks/useProfile'
 import { useBadges, BadgeWithStatus } from '@/hooks/useBadges'
 import { useAuth } from '@/contexts/AuthContext'
@@ -23,7 +24,7 @@ function StatCard({
   )
 }
 
-function BadgeItem({ badge }: { badge: BadgeWithStatus }) {
+function RankItem({ badge }: { badge: BadgeWithStatus }) {
   return (
     <View
       className={`items-center p-3 rounded-xl mr-3 w-20 border ${
@@ -38,7 +39,68 @@ function BadgeItem({ badge }: { badge: BadgeWithStatus }) {
       <Text className="text-xs text-center text-text-secondary font-medium mt-1" numberOfLines={2}>
         {badge.name}
       </Text>
-      {badge.earned && <Text className="text-xs text-success mt-1">Earned</Text>}
+    </View>
+  )
+}
+
+function WhyWeAreHere() {
+  const [expanded, setExpanded] = useState(false)
+
+  return (
+    <View className="mx-4 mb-4">
+      <Pressable
+        onPress={() => setExpanded(!expanded)}
+        className="bg-card rounded-xl p-4 border border-border-default"
+      >
+        <View className="flex-row items-center justify-between">
+          <Text className="font-bold text-text-primary">Why We're Here</Text>
+          {expanded ? (
+            <ChevronUp size={20} color="#a3a3a3" />
+          ) : (
+            <ChevronDown size={20} color="#a3a3a3" />
+          )}
+        </View>
+
+        {expanded && (
+          <View className="mt-4">
+            <Text className="text-text-secondary leading-6 mb-4">
+              There's a weight most of us carry — that the big problems aren't ours to solve.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              We're tired. Worn out. Misdirected by so many problems we don't know where to begin.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              We feel like we can't take on large entities because they have so much money. We can't change the government. We can't solve certain technical problems because there's too much constraint around them.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              These were the same feelings before we went to the moon.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              But by combining many patterns and many skills across many industries — by focusing — we did what seemed impossible.
+            </Text>
+
+            <Text className="text-text-primary leading-6 mb-4 font-medium">
+              This app is about focusing.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              It's about finding the problems that are worth solving, coordinating, agreeing, actually grabbing a metric around when they'll be feasible — and coordinating that with those who could compete to solve them.
+            </Text>
+
+            <Text className="text-text-secondary leading-6 mb-4">
+              What you're doing here is not just fun. It's not just interesting. These are not just cards — they are ideas created by experts and groups of people across industries, ideas that are executable, purposely crafted to get you out of the box.
+            </Text>
+
+            <Text className="text-accent leading-6 font-semibold">
+              Every time you swipe, every time you make a commitment — you are crafting the future.
+            </Text>
+          </View>
+        )}
+      </Pressable>
     </View>
   )
 }
@@ -60,8 +122,8 @@ export default function Profile() {
     )
   }
 
-  const earnedBadges = badges?.filter((b) => b.earned) ?? []
-  const unearnedBadges = badges?.filter((b) => !b.earned) ?? []
+  const earnedRanks = badges?.filter((b) => b.earned) ?? []
+  const unearnedRanks = badges?.filter((b) => !b.earned) ?? []
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
@@ -84,53 +146,36 @@ export default function Profile() {
 
         {/* Stats */}
         <View className="flex-row gap-3 px-4 py-4">
-          <StatCard label="Points" value={profile?.points ?? 0} icon={Zap} />
-          <StatCard label="Streak" value={profile?.current_streak ?? 0} icon={Flame} />
-          <StatCard label="Badges" value={earnedBadges.length} icon={Award} />
+          <StatCard label="Force" value={profile?.points ?? 0} icon={Zap} />
+          <StatCard label="Ranks" value={earnedRanks.length} icon={Award} />
         </View>
 
-        {/* Streak Info */}
-        <View className="mx-4 bg-card rounded-xl p-4 mb-4 border border-border-default">
-          <Text className="font-bold text-text-primary mb-3">Streak Stats</Text>
-          <View className="flex-row justify-between">
-            <View>
-              <Text className="text-text-secondary text-sm">Current Streak</Text>
-              <Text className="text-xl font-bold text-accent">
-                {profile?.current_streak ?? 0} days
-              </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-text-secondary text-sm">Longest Streak</Text>
-              <Text className="text-xl font-bold text-text-primary">
-                {profile?.longest_streak ?? 0} days
-              </Text>
-            </View>
-          </View>
-        </View>
+        {/* Why We're Here */}
+        <WhyWeAreHere />
 
-        {/* Earned Badges */}
-        {earnedBadges.length > 0 && (
+        {/* Earned Ranks */}
+        {earnedRanks.length > 0 && (
           <View className="mb-4">
             <Text className="text-lg font-bold text-text-primary px-4 mb-3">
-              Earned Badges ({earnedBadges.length})
+              Ranks ({earnedRanks.length})
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="pl-4">
-              {earnedBadges.map((badge) => (
-                <BadgeItem key={badge.id} badge={badge} />
+              {earnedRanks.map((badge) => (
+                <RankItem key={badge.id} badge={badge} />
               ))}
             </ScrollView>
           </View>
         )}
 
-        {/* Locked Badges */}
-        {unearnedBadges.length > 0 && (
+        {/* Locked Ranks */}
+        {unearnedRanks.length > 0 && (
           <View className="mb-4">
             <Text className="text-lg font-bold text-text-primary px-4 mb-3">
-              Locked Badges ({unearnedBadges.length})
+              Locked Ranks ({unearnedRanks.length})
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="pl-4">
-              {unearnedBadges.map((badge) => (
-                <BadgeItem key={badge.id} badge={badge} />
+              {unearnedRanks.map((badge) => (
+                <RankItem key={badge.id} badge={badge} />
               ))}
             </ScrollView>
           </View>
