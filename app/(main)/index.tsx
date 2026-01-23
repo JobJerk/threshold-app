@@ -55,7 +55,7 @@ function getRandomMessage(messages: string[]): string {
 
 export default function Home() {
   const { data: thresholds, isLoading, error } = useThresholds()
-  const { mutate: commit, isPending: isCommitting } = useCommitment()
+  const { mutateAsync: commitAsync, isPending: isCommitting } = useCommitment()
   const { energy, canCommit, timeUntilNext } = useEnergy()
   const swiperRef = useRef<Swiper<Threshold>>(null)
   const [cardIndex, setCardIndex] = useState(0)
@@ -81,25 +81,21 @@ export default function Home() {
       }
 
       const threshold = thresholds[index]
-      commit(
-        { threshold },
-        {
-          onSuccess: ({ points, newBadges }) => {
-            const commitMessage = getRandomMessage(COMMITMENT_MESSAGES)
-            let message = `+${points} force`
-            if (newBadges && newBadges.length > 0) {
-              const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
-              message += `\n\nNew rank: ${badgeNames}`
-            }
-            showAlert(commitMessage, message)
-          },
-          onError: (err) => {
-            showAlert('Error', err.message)
-          },
-        }
-      )
+      commitAsync({ threshold })
+        .then(({ points, newBadges }) => {
+          const commitMessage = getRandomMessage(COMMITMENT_MESSAGES)
+          let message = `+${points} force`
+          if (newBadges && newBadges.length > 0) {
+            const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
+            message += `\n\nNew rank: ${badgeNames}`
+          }
+          showAlert(commitMessage, message)
+        })
+        .catch((err: Error) => {
+          showAlert('Error', err.message)
+        })
     },
-    [thresholds, commit, canCommit, timeUntilNext]
+    [thresholds, commitAsync, canCommit, timeUntilNext]
   )
 
   const onSwipedLeft = useCallback(() => {
