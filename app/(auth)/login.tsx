@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { CheckCircle, ArrowLeft } from 'lucide-react-native'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { useRouter } from 'expo-router'
 
 export default function Login() {
@@ -10,11 +11,12 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const { signInWithEmail } = useAuth()
+  const { showError } = useToast()
   const router = useRouter()
 
   const handleSignIn = async () => {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email')
+      showError('Error', 'Please enter your email')
       return
     }
 
@@ -23,7 +25,7 @@ export default function Login() {
     setLoading(false)
 
     if (error) {
-      Alert.alert('Error', error.message)
+      showError('Error', error.message)
     } else {
       setSent(true)
     }
