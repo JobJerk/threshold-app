@@ -2,7 +2,13 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { Platform } from 'react-native'
 import { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
+import { makeRedirectUri } from 'expo-auth-session'
+import * as QueryParams from 'expo-auth-session/build/QueryParams'
 import * as Linking from 'expo-linking'
+import * as WebBrowser from 'expo-web-browser'
+
+// Required for web OAuth
+WebBrowser.maybeCompleteAuthSession()
 
 interface AuthContextType {
   user: User | null
@@ -14,10 +20,36 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Create session from deep link URL (official Supabase pattern)
+const createSessionFromUrl = async (url: string) => {
+  const { params, errorCode } = QueryParams.getQueryParams(url)
+
+  if (errorCode) throw new Error(errorCode)
+  const { access_token, refresh_token } = params
+
+  if (!access_token) return null
+
+  const { data, error } = await supabase.auth.setSession({
+    access_token,
+    refresh_token,
+  })
+  if (error) throw error
+  return data.session
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // Handle deep link URL (official Supabase pattern)
+  const url = Linking.useURL()
+
+  useEffect(() => {
+    if (url) {
+      createSessionFromUrl(url).catch(console.error)
+    }
+  }, [url])
 
   useEffect(() => {
     // Get initial session
@@ -40,10 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signInWithEmail = async (email: string) => {
-    // Use web URL for web, deep link for native
+    // Use official Supabase redirect pattern
     const redirectTo = Platform.OS === 'web'
       ? window.location.origin
-      : Linking.createURL('/auth/callback')
+      : makeRedirectUri()
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
