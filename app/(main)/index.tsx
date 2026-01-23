@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useMemo } from 'react'
-import { View, Text, Dimensions, Alert } from 'react-native'
+import { View, Text, Dimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Swiper from 'react-native-deck-swiper'
 import { Sparkles } from 'lucide-react-native'
@@ -9,6 +9,7 @@ import { useThresholds } from '@/hooks/useThresholds'
 import { useCommitment } from '@/hooks/useCommitment'
 import { useEnergy } from '@/hooks/useEnergy'
 import { Threshold } from '@/lib/supabase/types'
+import { showAlert } from '@/utils/alert'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -71,7 +72,7 @@ export default function Home() {
         const timeMsg = timeUntilNext
           ? `\n\nEnergy refills in ${timeUntilNext.minutes}m ${timeUntilNext.seconds}s, or fully resets at midnight.`
           : ''
-        Alert.alert(depletedMessage, `Pass for now, or wait for energy to refill.${timeMsg}`, [
+        showAlert(depletedMessage, `Pass for now, or wait for energy to refill.${timeMsg}`, [
           { text: 'OK' },
         ])
         // Swipe the card back (undo the swipe)
@@ -90,10 +91,10 @@ export default function Home() {
               const badgeNames = newBadges.map((b) => b.badge_name).join(', ')
               message += `\n\nNew rank: ${badgeNames}`
             }
-            Alert.alert(commitMessage, message)
+            showAlert(commitMessage, message)
           },
           onError: (err) => {
-            Alert.alert('Error', err.message)
+            showAlert('Error', err.message)
           },
         }
       )
